@@ -1,17 +1,20 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useSession } from "~/components/session-provider";
 import { buttonVariants } from "~/components/ui/button";
+import { useSystemTheme } from "~/hooks/useSystemTheme";
 import { ModeToggle } from "../components/mode-toggle";
 import { useTheme } from "../components/theme-provider";
 import { DropDown } from "./dropdown";
 
 export function SiteHeader() {
-	const themeState = useTheme();
-	const theme = themeState.theme;
-	const logoUrl =
-		theme === "dark"
-			? "/browndust2-logo-white.png"
-			: "/browndust2-logo-black.png";
+	const [theme, systemTheme] = useSystemTheme();
+
+	const whiteLogoUrl = "/browndust2-logo-white.png";
+	const blackLogoUrl = "/browndust2-logo-black.png";
+	const isDark =
+		theme === "dark" || (theme === "system" && systemTheme === "dark");
+	const logoUrl = isDark ? whiteLogoUrl : blackLogoUrl;
 
 	const session = useSession();
 
