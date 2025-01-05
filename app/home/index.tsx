@@ -83,7 +83,7 @@ export default function Home() {
 		<>
 			{data?.map((d) => (
 				<div
-					className="flex items-center space-x-2 justify-between"
+					className="flex items-center space-x-2 justify-between pb-2 md:pb-1"
 					key={d.tasks.id}
 				>
 					<Label>{d.tasks.title}</Label>
