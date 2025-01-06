@@ -41,7 +41,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          is_essential: boolean | null
+          is_essential: boolean
           title: string
           updated_at: string | null
         }
@@ -49,7 +49,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_essential?: boolean | null
+          is_essential?: boolean
           title: string
           updated_at?: string | null
         }
@@ -57,7 +57,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_essential?: boolean | null
+          is_essential?: boolean
           title?: string
           updated_at?: string | null
         }
@@ -97,10 +97,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      insert_user_tasks: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

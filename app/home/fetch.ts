@@ -1,3 +1,4 @@
+import { countBy, groupBy, prop } from "remeda";
 import { supabase } from "~/clients";
 
 export async function fetchDailyTasks() {
@@ -23,6 +24,21 @@ export async function fetchDailyTasks() {
 	return data;
 }
 export type DailyTasks = Awaited<ReturnType<typeof fetchDailyTasks>>;
+
+export async function fetchTaskCounts() {
+	const { data, error } = await supabase.from("tasks").select("is_essential");
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	const countByCatagory = countBy(data, (v) =>
+		v.is_essential ? "essential" : "optional",
+	);
+
+	return {
+		...countByCatagory,
+	};
+}
 
 export async function toggleDailyTaskStatus(
 	taskId: string,

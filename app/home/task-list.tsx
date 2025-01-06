@@ -3,32 +3,16 @@ import { Checkbox } from "~/components/ui/checkbox";
 import type { DailyTasks } from "./fetch";
 
 interface TaskListProps {
-	className?: string;
-	title: string;
-	tasks?: DailyTasks;
-	isEssential: boolean;
+	tasks: DailyTasks;
 	onToggle: (opt: { taskId: string; currentStatus: boolean }) => void;
 }
 
-export function TaskList({
-	className,
-	title,
-	tasks,
-	isEssential,
-	onToggle,
-}: TaskListProps) {
-	const filteredTasks = tasks?.filter(
-		(d) => d.tasks.is_essential === isEssential,
-	);
-
-	if (!filteredTasks || filteredTasks.length === 0) return null;
-
+export function TaskList({ tasks, onToggle }: TaskListProps) {
 	return (
-		<div className={className}>
-			<h2 className="pb-1">{title}</h2>
-			{filteredTasks.map((d) => (
+		<div className="space-y-2">
+			{tasks.map((d) => (
 				<div
-					className="flex items-center justify-between space-x-2 pb-2 md:pb-1"
+					className="flex items-center justify-between space-x-2"
 					key={d.tasks.id}
 				>
 					<Label>{d.tasks.title}</Label>

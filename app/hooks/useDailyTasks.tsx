@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryClient } from "~/clients";
 import { useSession } from "~/components/session-provider";
 import {
@@ -9,10 +9,9 @@ import {
 
 export function useDailyTasks(userId: string | undefined) {
 	// Fetch
-	const { data, isPending } = useQuery({
+	const { data } = useSuspenseQuery({
 		queryKey: ["tasks"],
 		queryFn: fetchDailyTasks,
-		enabled: Boolean(userId),
 	});
 
 	// Mutate
@@ -51,7 +50,6 @@ export function useDailyTasks(userId: string | undefined) {
 
 	return {
 		data,
-		isPending,
 		toggleTaskStatus: mutation.mutate,
 	};
 }

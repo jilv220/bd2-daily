@@ -1,6 +1,9 @@
+import { Suspense } from "react";
+import { useLoaderData } from "react-router";
 import { useSession } from "~/components/session-provider";
-import { useDailyTasks } from "~/hooks/useDailyTasks";
-import { TaskList } from "./task-list";
+import { fetchTaskCounts } from "./fetch";
+import { TaskListContainer } from "./task-list-container";
+import { TaskListSkeleton } from "./task-list-skeleton";
 
 export function meta() {
 	return [
@@ -9,9 +12,14 @@ export function meta() {
 	];
 }
 
+export async function clientLoader() {
+	const data = await fetchTaskCounts();
+	return data;
+}
+
 export default function Home() {
+	const counts = useLoaderData<typeof clientLoader>();
 	const session = useSession();
-	const { data, isPending, toggleTaskStatus } = useDailyTasks(session?.user.id);
 
 	if (!session) {
 		return (
@@ -22,25 +30,23 @@ export default function Home() {
 		);
 	}
 
-	if (isPending) {
-		return <div>is loading...</div>;
-	}
-
 	return (
 		<>
-			<TaskList
-				className="pb-2"
-				title="Essential"
-				tasks={data}
-				isEssential={true}
-				onToggle={toggleTaskStatus}
-			/>
-			<TaskList
-				title="Optional"
-				tasks={data}
-				isEssential={false}
-				onToggle={toggleTaskStatus}
-			/>
+			<div className="space-y-4">
+				<section>
+					<h2 className="pb-1">Essential</h2>
+					<Suspense fallback={<TaskListSkeleton length={counts.essential} />}>
+						<TaskListContainer userId={session.user.id} isEssential={true} />
+					</Suspense>
+				</section>
+
+				<section>
+					<h2 className="pb-1">Optional</h2>
+					<Suspense fallback={<TaskListSkeleton length={counts.optional} />}>
+						<TaskListContainer userId={session.user.id} isEssential={false} />
+					</Suspense>
+				</section>
+			</div>
 		</>
 	);
 }
