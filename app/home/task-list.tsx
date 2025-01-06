@@ -7,7 +7,7 @@ interface TaskListProps {
 	title: string;
 	tasks?: DailyTasks;
 	isEssential: boolean;
-	onToggle: (taskId: string, currentStatus: boolean) => void;
+	onToggle: (opt: { taskId: string; currentStatus: boolean }) => void;
 }
 
 export function TaskList({
@@ -34,7 +34,12 @@ export function TaskList({
 					<Label>{d.tasks.title}</Label>
 					<Checkbox
 						checked={d.is_finished}
-						onClick={() => onToggle(d.tasks.id, d.is_finished)}
+						onClick={() =>
+							onToggle({
+								taskId: d.tasks.id,
+								currentStatus: d.is_finished,
+							})
+						}
 					/>
 				</div>
 			))}

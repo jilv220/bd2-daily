@@ -7,14 +7,12 @@ import {
 	toggleDailyTaskStatus,
 } from "~/home/fetch";
 
-export function useDailyTasks() {
-	const session = useSession();
-
+export function useDailyTasks(userId: string | undefined) {
 	// Fetch
-	const { data, isFetching } = useQuery({
-		queryKey: ["tasks", session?.user?.id],
+	const { data, isPending } = useQuery({
+		queryKey: ["tasks"],
 		queryFn: fetchDailyTasks,
-		enabled: Boolean(session),
+		enabled: Boolean(userId),
 	});
 
 	// Mutate
@@ -28,54 +26,32 @@ export function useDailyTasks() {
 		}) => toggleDailyTaskStatus(taskId, currentStatus),
 		onMutate: async ({ taskId, currentStatus }) => {
 			await queryClient.cancelQueries({
-				queryKey: ["tasks", session?.user?.id],
+				queryKey: ["tasks"],
 			});
 
 			// Snapshot the previous data
-			const previousData = queryClient.getQueryData<DailyTasks>([
-				"tasks",
-				session?.user?.id,
-			]);
+			const previousData = queryClient.getQueryData<DailyTasks>(["tasks"]);
 
 			// Optimistically update the cache
-			queryClient.setQueryData<DailyTasks>(
-				["tasks", session?.user?.id],
-				(old) =>
-					old
-						? old.map((t) =>
-								t.tasks.id === taskId
-									? { ...t, is_finished: !currentStatus }
-									: t,
-							)
-						: [],
-			);
+			queryClient.setQueryData<DailyTasks>(["tasks"], (old) => {
+				return old?.map((t) =>
+					t.tasks.id === taskId ? { ...t, is_finished: !currentStatus } : t,
+				);
+			});
 
 			return { previousData };
 		},
 		onError: (_err, _vars, context) => {
 			// Revert to the previous data if mutation fails
 			if (context?.previousData) {
-				queryClient.setQueryData(
-					["tasks", session?.user?.id],
-					context.previousData,
-				);
+				queryClient.setQueryData(["tasks"], context.previousData);
 			}
-		},
-		onSettled: () => {
-			// Re-fetch after mutation
-			queryClient.invalidateQueries({ queryKey: ["tasks", session?.user?.id] });
 		},
 	});
 
-	// Helper to trigger the mutation
-	const toggleTaskStatus = (taskId: string, currentStatus: boolean) => {
-		mutation.mutate({ taskId, currentStatus });
-	};
-
 	return {
-		session,
 		data,
-		isPending: isFetching,
-		toggleTaskStatus,
+		isPending,
+		toggleTaskStatus: mutation.mutate,
 	};
 }

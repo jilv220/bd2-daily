@@ -1,3 +1,4 @@
+import { useSession } from "~/components/session-provider";
 import { useDailyTasks } from "~/hooks/useDailyTasks";
 import { TaskList } from "./task-list";
 
@@ -9,7 +10,8 @@ export function meta() {
 }
 
 export default function Home() {
-	const { session, data, isPending, toggleTaskStatus } = useDailyTasks();
+	const session = useSession();
+	const { data, isPending, toggleTaskStatus } = useDailyTasks(session?.user.id);
 
 	if (!session) {
 		return (
