@@ -1,11 +1,7 @@
 import { Github } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router";
 import { supabase } from "~/clients";
-import Divider from "~/components/divider";
 import { Button } from "~/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import AuthHeader from "./auth-header";
 
 export default function Login() {
 	return (
@@ -15,12 +11,15 @@ export default function Login() {
 				<div className="text-muted-foreground">continue with:</div>
 			</CardHeader>
 			<CardFooter className="w-full flex-col p-10 pt-0">
-				<div className="flex flex-col gap-2 w-full">
+				<div className="flex w-full flex-col gap-2">
 					<Button
 						onClick={async () => {
-							const { data, error } = await supabase.auth.signInWithOAuth({
+							const { error } = await supabase.auth.signInWithOAuth({
 								provider: "github",
 							});
+							if (error) {
+								console.error("Error signing in the user", error);
+							}
 						}}
 					>
 						<Github className="mr-2 h-4 w-4" />
