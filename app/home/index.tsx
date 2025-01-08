@@ -36,14 +36,14 @@ export default function Home() {
 				<section>
 					<h2 className="pb-1">Essential</h2>
 					<Suspense fallback={<TaskListSkeleton length={counts.essential} />}>
-						<TaskListContainer userId={session.user.id} isEssential={true} />
+						<TaskListContainer userId={session.user.id} category="essential" />
 					</Suspense>
 				</section>
 
 				<section>
 					<h2 className="pb-1">Optional</h2>
 					<Suspense fallback={<TaskListSkeleton length={counts.optional} />}>
-						<TaskListContainer userId={session.user.id} isEssential={false} />
+						<TaskListContainer userId={session.user.id} category="optional" />
 					</Suspense>
 				</section>
 			</div>

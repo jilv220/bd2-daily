@@ -14,7 +14,7 @@ export type Database = MergeDeep<
 				user_tasks_with_position: {
 					Row: {
 						assigned_date: string;
-						is_essential: boolean;
+						category: Database["public"]["Enums"]["task_category"];
 						is_finished: boolean;
 						position: number | null;
 						task_id: string;

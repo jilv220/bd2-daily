@@ -16,15 +16,12 @@ export async function fetchDailyTasks() {
 export type DailyTasks = Awaited<ReturnType<typeof fetchDailyTasks>>;
 
 export async function fetchTaskCounts() {
-	const { data, error } = await supabase.from("tasks").select("is_essential");
+	const { data, error } = await supabase.from("tasks").select("category");
 	if (error) {
 		throw new Error(error.message);
 	}
 
-	const countByCatagory = countBy(data, (v) =>
-		v.is_essential ? "essential" : "optional",
-	);
-
+	const countByCatagory = countBy(data, (v) => v.category);
 	return {
 		...countByCatagory,
 	};

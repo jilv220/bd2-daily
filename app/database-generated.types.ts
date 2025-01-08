@@ -67,26 +67,26 @@ export type Database = {
       }
       tasks: {
         Row: {
+          category: Database["public"]["Enums"]["task_category"]
           created_at: string | null
           description: string | null
           id: string
-          is_essential: boolean
           title: string
           updated_at: string | null
         }
         Insert: {
+          category?: Database["public"]["Enums"]["task_category"]
           created_at?: string | null
           description?: string | null
           id?: string
-          is_essential?: boolean
           title: string
           updated_at?: string | null
         }
         Update: {
+          category?: Database["public"]["Enums"]["task_category"]
           created_at?: string | null
           description?: string | null
           id?: string
-          is_essential?: boolean
           title?: string
           updated_at?: string | null
         }
@@ -126,7 +126,7 @@ export type Database = {
       user_tasks_with_position: {
         Row: {
           assigned_date: string | null
-          is_essential: boolean | null
+          category: Database["public"]["Enums"]["task_category"] | null
           is_finished: boolean | null
           position: number | null
           task_id: string | null
@@ -148,7 +148,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      task_category: "essential" | "optional" | "seasonal"
     }
     CompositeTypes: {
       [_ in never]: never
