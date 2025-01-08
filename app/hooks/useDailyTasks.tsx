@@ -34,7 +34,7 @@ export function useDailyTasks(userId: string | undefined) {
 			// Optimistically update the cache
 			queryClient.setQueryData<DailyTasks>(["tasks"], (old) => {
 				return old?.map((t) =>
-					t.tasks.id === taskId ? { ...t, is_finished: !currentStatus } : t,
+					t.task_id === taskId ? { ...t, is_finished: !currentStatus } : t,
 				);
 			});
 

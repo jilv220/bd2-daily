@@ -3,24 +3,14 @@ import { supabase } from "~/clients";
 
 export async function fetchDailyTasks() {
 	const { data, error } = await supabase
-		.from("user_tasks")
-		.select(`
-			user_id,
-			assigned_date,
-			is_finished,
-			tasks (
-				id,
-				title,
-				is_essential
-			)
-		`)
+		.from("user_tasks_with_position")
+		.select("*")
 		.eq("assigned_date", new Date().toISOString().split("T")[0])
-		.order("task_id", { ascending: true });
+		.order("position", { ascending: true, nullsFirst: false });
 
 	if (error) {
 		throw new Error(error.message);
 	}
-
 	return data;
 }
 export type DailyTasks = Awaited<ReturnType<typeof fetchDailyTasks>>;

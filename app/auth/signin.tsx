@@ -1,7 +1,16 @@
 import { Github } from "lucide-react";
+import { redirect } from "react-router";
 import { supabase } from "~/clients";
 import { Button } from "~/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
+
+export async function clientLoader() {
+	const { data, error } = await supabase.auth.getSession();
+	if (data.session) {
+		return redirect("/");
+	}
+	if (error) return error.message;
+}
 
 export default function Login() {
 	return (

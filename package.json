@@ -7,7 +7,7 @@
     "dev": "react-router dev",
     "start": "cross-env NODE_ENV=production react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "typegen": "supabase gen types --project-id evfqahjnikcqhiqtjapk > ./app/database.types.ts"
+    "typegen": "supabase gen types --project-id evfqahjnikcqhiqtjapk > ./app/database-generated.types.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.2",
@@ -33,7 +33,8 @@
     "remeda": "^2.19.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "tiny-invariant": "^1.3.3"
+    "tiny-invariant": "^1.3.3",
+    "type-fest": "^4.31.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
