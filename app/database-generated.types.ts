@@ -38,18 +38,21 @@ export type Database = {
       }
       task_orders: {
         Row: {
+          category: Database["public"]["Enums"]["task_category"]
           position: number
           task_id: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          category?: Database["public"]["Enums"]["task_category"]
           position: number
           task_id: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          category?: Database["public"]["Enums"]["task_category"]
           position?: number
           task_id?: string
           updated_at?: string

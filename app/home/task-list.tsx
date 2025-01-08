@@ -11,12 +11,10 @@ export function TaskList({ tasks, onToggle }: TaskListProps) {
 	return (
 		<div className="space-y-2">
 			{tasks.map((t) => (
-				<div
-					className="flex items-center justify-between space-x-2"
-					key={t.task_id}
-				>
+				<div className="flex items-center justify-between" key={t.task_id}>
 					<Label>{t.title}</Label>
 					<Checkbox
+						className="mr-3"
 						checked={t.is_finished}
 						onClick={() =>
 							onToggle({

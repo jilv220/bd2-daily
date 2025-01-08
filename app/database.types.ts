@@ -26,3 +26,5 @@ export type Database = MergeDeep<
 		};
 	}
 >;
+
+export type TaskCategory = Database["public"]["Enums"]["task_category"];

@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { queryClient } from "~/clients";
+import type { TaskCategory } from "~/database.types";
 import {
 	type DailyTasks,
+	type TaskPostion,
 	fetchDailyTasks,
 	toggleDailyTaskStatus,
+	updateTaskPositions,
 } from "~/home/fetch";
 
-export function useDailyTasks(userId: string | undefined) {
+export function useDailyTasks() {
 	// Fetch
 	const { data } = useSuspenseQuery({
 		queryKey: ["tasks"],
@@ -47,8 +50,58 @@ export function useDailyTasks(userId: string | undefined) {
 		},
 	});
 
+	const reorderMutation = useMutation({
+		mutationFn: ({
+			newOrder,
+			category,
+		}: {
+			newOrder: TaskPostion[];
+			category: TaskCategory;
+		}) => {
+			return updateTaskPositions(newOrder, category);
+		},
+		onMutate: async ({ newOrder, category }) => {
+			await queryClient.cancelQueries({
+				queryKey: ["tasks"],
+			});
+			const previousData = queryClient.getQueryData<DailyTasks>(["tasks"]);
+
+			// Create a position lookup from newOrder
+			const positionMap = new Map(
+				newOrder.map(({ taskId, position }) => [taskId, position]),
+			);
+
+			// Optimistically update positions
+			queryClient.setQueryData<DailyTasks>(["tasks"], (old) => {
+				if (!old) return old;
+
+				return old.map((task) => {
+					const newPosition = positionMap.get(task.task_id);
+					if (task.category === category && newPosition !== undefined) {
+						return { ...task, position: newPosition };
+					}
+					return task;
+				});
+			});
+
+			return { previousData };
+		},
+		onError: (_err, _vars, context) => {
+			if (context?.previousData) {
+				queryClient.setQueryData(["tasks"], context.previousData);
+			}
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["tasks"],
+			});
+		},
+	});
+
 	return {
 		data,
 		toggleTaskStatus: mutation.mutate,
+		updateTaskPositions: reorderMutation.mutate,
+		isUpdatingPositions: reorderMutation.isPending,
 	};
 }
