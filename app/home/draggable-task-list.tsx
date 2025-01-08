@@ -59,14 +59,14 @@ export function DraggableTaskList({
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: {
-				// Only start dragging after moving 8px
-				distance: 8,
+				// Only start dragging after moving
+				distance: 10,
 			},
 		}),
 		useSensor(TouchSensor, {
-			// Require press and hold for 200ms on touch devices
+			// Require press and hold for touch devices
 			activationConstraint: {
-				delay: 200,
+				delay: 250,
 				tolerance: 5,
 			},
 		}),
