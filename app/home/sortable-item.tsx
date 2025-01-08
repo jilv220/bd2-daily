@@ -20,6 +20,7 @@ export function SortableItem({ id, title }: SortableItemProps) {
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,
+		touchAction: "none",
 	};
 
 	return (
@@ -27,17 +28,17 @@ export function SortableItem({ id, title }: SortableItemProps) {
 			ref={setNodeRef}
 			style={style}
 			className={`flex items-center space-x-2 rounded-md border p-2 ${
-				isDragging ? "bg-muted" : "bg-background"
+				isDragging ? "bg-muted shadow-lg" : "bg-background"
 			}`}
 		>
 			<button
 				{...attributes}
 				{...listeners}
-				className="cursor-grab hover:text-primary"
+				className="cursor-grab touch-none active:cursor-grabbing"
 			>
-				<GripVertical className="h-4 w-4" />
+				<GripVertical className="h-4 w-4 text-muted-foreground hover:text-primary" />
 			</button>
-			<span className="flex-1">{title}</span>
+			<span className="flex-1 select-none">{title}</span>
 		</div>
 	);
 }

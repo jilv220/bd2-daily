@@ -3,6 +3,7 @@ import {
 	type DragEndEvent,
 	KeyboardSensor,
 	PointerSensor,
+	TouchSensor,
 	closestCenter,
 	useSensor,
 	useSensors,
@@ -13,10 +14,8 @@ import {
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { X } from "lucide-react";
-import React, { useState, useEffect, useCallback } from "react";
-import SortableItem from "~/components/sortable-item";
-import { Button } from "~/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import SortableItem from "~/home/sortable-item";
 import { debounce } from "~/lib/utils";
 import type { DailyTasks, TaskPostion } from "./fetch";
 
@@ -58,7 +57,19 @@ export function DraggableTaskList({
 	}, [debouncedSave]);
 
 	const sensors = useSensors(
-		useSensor(PointerSensor),
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				// Only start dragging after moving 8px
+				distance: 8,
+			},
+		}),
+		useSensor(TouchSensor, {
+			// Require press and hold for 200ms on touch devices
+			activationConstraint: {
+				delay: 200,
+				tolerance: 5,
+			},
+		}),
 		useSensor(KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
 		}),
