@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useSession } from "~/components/session-provider";
 import { useTheme } from "~/components/theme-provider";
@@ -6,7 +5,11 @@ import { buttonVariants } from "~/components/ui/button";
 import { ModeToggle } from "../components/mode-toggle";
 import { DropDown } from "./dropdown";
 
-export function SiteHeader() {
+type AppHeaderProps = {
+	children?: React.ReactNode;
+};
+
+export function AppHeader({ children }: AppHeaderProps) {
 	const { theme, systemTheme } = useTheme();
 
 	const whiteLogoUrl = "/browndust2-logo-white.png";
@@ -19,9 +22,10 @@ export function SiteHeader() {
 
 	return (
 		<header className="sticky top-0 z-50 w-full border-b bg-background/95">
-			<div className="flex items-center space-x-2 h-14 px-5">
+			<div className="flex h-14 items-center space-x-2 pr-5">
 				<div className="flex-grow">
-					<nav className="flex items-center space-x-6 text-base font-medium text-foreground/60 md:justify-start">
+					<nav className="flex items-center space-x-2 font-medium text-base text-foreground/60 md:justify-start">
+						{children}
 						<Link to="/">
 							<img
 								className="h-10"

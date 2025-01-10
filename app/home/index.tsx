@@ -1,9 +1,7 @@
-import { Suspense } from "react";
-import { useLoaderData } from "react-router";
+import { useEffect } from "react";
+import { queryClient, supabase } from "~/clients";
 import { useSession } from "~/components/session-provider";
-import { fetchTaskCounts } from "./fetch";
 import { TaskListContainer } from "./task-list-container";
-import { TaskListSkeleton } from "./task-list-skeleton";
 
 export function meta() {
 	return [
@@ -12,14 +10,35 @@ export function meta() {
 	];
 }
 
-export async function clientLoader() {
-	const data = await fetchTaskCounts();
-	return data;
-}
-
 export default function Home() {
-	const counts = useLoaderData<typeof clientLoader>();
 	const session = useSession();
+
+	// Listen to daily reset
+	useEffect(() => {
+		if (!session?.user.id) return;
+
+		const channel = supabase
+			.channel("supabase-realtime")
+			.on(
+				"postgres_changes",
+				{
+					event: "INSERT",
+					schema: "public",
+					table: "user_tasks",
+					filter: `user_id=eq.${session.user.id}`,
+				},
+				(_payload) => {
+					queryClient.invalidateQueries({
+						queryKey: ["tasks"],
+					});
+				},
+			)
+			.subscribe();
+
+		return () => {
+			channel.unsubscribe();
+		};
+	}, [session?.user.id]);
 
 	if (!session) {
 		return (
@@ -34,11 +53,11 @@ export default function Home() {
 		<>
 			<div className="space-y-4">
 				<section>
-					<TaskListContainer category="essential" counts={counts} />
+					<TaskListContainer category="essential" />
 				</section>
 
 				<section>
-					<TaskListContainer category="optional" counts={counts} />
+					<TaskListContainer category="optional" />
 				</section>
 			</div>
 		</>

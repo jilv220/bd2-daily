@@ -1,23 +1,18 @@
 import { Settings } from "lucide-react";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { capitalize } from "remeda";
 import { Button } from "~/components/ui/button";
 import type { Database } from "~/database.types";
 import { useDailyTasks } from "~/hooks/useDailyTasks";
 import DraggableTaskList from "./draggable-task-list";
-import type { TaskCounts, TaskPostion } from "./fetch";
+import type { TaskPostion } from "./fetch";
 import { TaskList } from "./task-list";
-import { TaskListSkeleton } from "./task-list-skeleton";
 
 interface TaskListContainerProps {
-	counts: TaskCounts;
 	category: Database["public"]["Enums"]["task_category"];
 }
 
-export function TaskListContainer({
-	counts,
-	category,
-}: TaskListContainerProps) {
+export function TaskListContainer({ category }: TaskListContainerProps) {
 	const [isEditing, setIsEditing] = useState(false);
 	const {
 		data: tasks,
@@ -54,13 +49,11 @@ export function TaskListContainer({
 					</Button>
 				</div>
 			</div>
-			<Suspense fallback={<TaskListSkeleton length={counts[category]} />}>
-				{isEditing ? (
-					<DraggableTaskList tasks={filteredTasks} onSave={handleSaveOrder} />
-				) : (
-					<TaskList tasks={filteredTasks} onToggle={toggleTaskStatus} />
-				)}
-			</Suspense>
+			{isEditing ? (
+				<DraggableTaskList tasks={filteredTasks} onSave={handleSaveOrder} />
+			) : (
+				<TaskList tasks={filteredTasks} onToggle={toggleTaskStatus} />
+			)}
 		</>
 	);
 }
