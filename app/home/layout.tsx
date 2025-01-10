@@ -1,4 +1,4 @@
-import { Outlet, useNavigation } from "react-router";
+import { Outlet } from "react-router";
 import { AppSidebar } from "~/components/app-sidebar";
 import {
 	SidebarInset,
