@@ -62,10 +62,16 @@ export function RefinementConverter() {
 		},
 	});
 	const {
-		formState: { isSubmitSuccessful },
+		formState: { isValid, isDirty },
 	} = form;
 
 	const [convertRes, setConvertRes] = useState(-1);
+	useEffect(() => {
+		if (!isValid) {
+			setConvertRes(-1);
+		}
+	}, [isValid]);
+
 	const onSumbit = ({ refinement }: z.infer<typeof refinementSchema>) => {
 		setConvertRes(calculateRefinementScore(refinement));
 	};
@@ -119,7 +125,7 @@ export function RefinementConverter() {
 												</FormControl>
 											</FormItem>
 											<FormMessage className="pt-0 pb-1 pl-1" />
-											{isSubmitSuccessful ? (
+											{convertRes !== -1 ? (
 												<p className="pt-0 pb-1 pl-1 font-medium text-sm">
 													Result is{" "}
 													<span className="text-emerald-500">
@@ -134,6 +140,7 @@ export function RefinementConverter() {
 									className="my-1 h-10 w-10"
 									variant={"ghost"}
 									type="submit"
+									disabled={!isDirty || !isValid}
 								>
 									<Search />
 								</Button>
