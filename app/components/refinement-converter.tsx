@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, Gavel, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -13,7 +14,14 @@ import {
 	SidebarMenuItem,
 } from "~/components/ui/sidebar";
 import { Button } from "./ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormMessage,
+	useFormField,
+} from "./ui/form";
 import { Input } from "./ui/input";
 
 const REFINEMENT_SCORES = {
@@ -24,27 +32,22 @@ const REFINEMENT_SCORES = {
 } as const;
 type RefinementChar = keyof typeof REFINEMENT_SCORES;
 
-const errorMessage = "Invalid Input";
 const refinementSchema = z.object({
 	refinement: z
 		.string()
-		.trim()
-		.toLowerCase()
+		.transform((str) => str.toLowerCase())
 		.pipe(
 			z
 				.string()
-				.length(3, errorMessage)
 				.regex(
 					new RegExp(`^[${Object.keys(REFINEMENT_SCORES).join("")}]*$`),
-					errorMessage,
-				),
+					"Has invalid character",
+				)
+				.length(3, "Must be 3 characters"),
 		),
 });
-type RefinementFormValues = z.infer<typeof refinementSchema>;
 
 const calculateRefinementScore = (refinement: string): number => {
-	if (refinement === "") return -1;
-
 	return refinement.split("").reduce((sum, char, index) => {
 		const score = REFINEMENT_SCORES[char as RefinementChar] ?? 0;
 		return sum + score * (index + 1);
@@ -52,27 +55,19 @@ const calculateRefinementScore = (refinement: string): number => {
 };
 
 export function RefinementConverter() {
-	const form = useForm<RefinementFormValues>({
+	const form = useForm<z.infer<typeof refinementSchema>>({
 		resolver: zodResolver(refinementSchema),
 		defaultValues: {
 			refinement: "",
 		},
 	});
 	const {
-		formState: { errors, isSubmitSuccessful },
-		reset,
+		formState: { isSubmitSuccessful },
 	} = form;
 
-	const onSubmit = ({ refinement }: RefinementFormValues) => {
-		return calculateRefinementScore(refinement);
-	};
-
-	const handleInputChange = (
-		e: React.ChangeEvent<HTMLInputElement>,
-		onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-	) => {
-		reset({ refinement: e.target.value }, { keepValues: true });
-		onChange(e);
+	const [convertRes, setConvertRes] = useState(-1);
+	const onSumbit = ({ refinement }: z.infer<typeof refinementSchema>) => {
+		setConvertRes(calculateRefinementScore(refinement));
 	};
 
 	return (
@@ -81,16 +76,14 @@ export function RefinementConverter() {
 				<DropdownMenu
 					onOpenChange={(isOpen) => {
 						if (!isOpen) {
-							// Has to pass a value for controlled component
-							reset({
-								refinement: "",
-							});
+							form.reset();
+							setConvertRes(-1);
 						}
 					}}
 				>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
-							size="lg"
+							size={"lg"}
 							className="text-base data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<Gavel />
@@ -101,13 +94,14 @@ export function RefinementConverter() {
 					<DropdownMenuContent
 						className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
 						align="start"
-						side="bottom"
+						side={"bottom"}
 						sideOffset={4}
 					>
 						<Form {...form}>
 							<form
 								className="flex w-full items-start space-x-1 px-[2px]"
-								onSubmit={form.handleSubmit(onSubmit)}
+								autoComplete="off"
+								onSubmit={form.handleSubmit(onSumbit)}
 							>
 								<FormField
 									control={form.control}
@@ -121,30 +115,24 @@ export function RefinementConverter() {
 														type="text"
 														placeholder="ccc"
 														{...field}
-														onChange={(e) =>
-															handleInputChange(e, field.onChange)
-														}
 													/>
 												</FormControl>
-												{errors.refinement ? (
-													<FormMessage />
-												) : (
-													isSubmitSuccessful && (
-														<p className="pt-0 pb-1 pl-1 font-medium text-sm">
-															Result is{" "}
-															<span className="text-emerald-500">
-																{calculateRefinementScore(field.value)}C
-															</span>
-														</p>
-													)
-												)}
 											</FormItem>
+											<FormMessage className="pt-0 pb-1 pl-1" />
+											{isSubmitSuccessful ? (
+												<p className="pt-0 pb-1 pl-1 font-medium text-sm">
+													Result is{" "}
+													<span className="text-emerald-500">
+														{convertRes}C
+													</span>
+												</p>
+											) : null}
 										</div>
 									)}
 								/>
 								<Button
 									className="my-1 h-10 w-10"
-									variant="ghost"
+									variant={"ghost"}
 									type="submit"
 								>
 									<Search />
