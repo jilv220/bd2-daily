@@ -22,7 +22,7 @@ import { cn } from "~/lib/utils";
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
+const SIDEBAR_WIDTH_MOBILE = "17rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -206,7 +206,8 @@ const Sidebar = React.forwardRef<
 					<SheetContent
 						data-sidebar="sidebar"
 						data-mobile="true"
-						className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+						// Overwrite animiation speed on mobile here
+						className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground data-[state=closed]:duration-200 data-[state=open]:duration-300 [&>button]:hidden"
 						style={
 							{
 								"--sidebar-width": SIDEBAR_WIDTH_MOBILE,

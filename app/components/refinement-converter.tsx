@@ -81,7 +81,10 @@ export function RefinementConverter() {
 				<DropdownMenu
 					onOpenChange={(isOpen) => {
 						if (!isOpen) {
-							reset();
+							// Has to pass a value for controlled component
+							reset({
+								refinement: "",
+							});
 						}
 					}}
 				>
@@ -127,7 +130,7 @@ export function RefinementConverter() {
 													<FormMessage />
 												) : (
 													isSubmitSuccessful && (
-														<p className="font-medium text-sm">
+														<p className="pt-0 pb-1 pl-1 font-medium text-sm">
 															Result is{" "}
 															<span className="text-emerald-500">
 																{calculateRefinementScore(field.value)}C
@@ -139,7 +142,11 @@ export function RefinementConverter() {
 										</div>
 									)}
 								/>
-								<Button className="my-1 h-9 w-9" variant="ghost" type="submit">
+								<Button
+									className="my-1 h-10 w-10"
+									variant="ghost"
+									type="submit"
+								>
 									<Search />
 								</Button>
 							</form>

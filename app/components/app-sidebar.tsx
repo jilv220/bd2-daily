@@ -12,6 +12,7 @@ import {
 	SidebarMenuItem,
 	SidebarRail,
 } from "~/components/ui/sidebar";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { RefinementConverter } from "./refinement-converter";
 
 const data = {
