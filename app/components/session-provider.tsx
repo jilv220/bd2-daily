@@ -1,6 +1,7 @@
 import type { Session } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "~/clients";
+import { fetchSession } from "~/lib/fetch";
 
 type SessionProviderProps = {
 	children: React.ReactNode;
@@ -13,13 +14,11 @@ export const SessionProvider = ({ children }: SessionProviderProps) => {
 	const [session, setSession] = useState<Session | null>(null);
 
 	useEffect(() => {
-		const fetchSession = async () => {
-			const {
-				data: { session },
-			} = await supabase.auth.getSession();
+		const fetchAndSetSession = async () => {
+			const session = await fetchSession();
 			setSession(session);
 		};
-		fetchSession();
+		fetchAndSetSession();
 
 		const {
 			data: { subscription },

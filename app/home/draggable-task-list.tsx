@@ -66,8 +66,9 @@ export function DraggableTaskList({
 		useSensor(TouchSensor, {
 			// Require press and hold for touch devices
 			activationConstraint: {
-				delay: 250,
-				tolerance: 5,
+				delay: 400,
+				distance: 10,
+				tolerance: 8,
 			},
 		}),
 		useSensor(KeyboardSensor, {
@@ -95,7 +96,7 @@ export function DraggableTaskList({
 	}
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-4 px-2">
 			<DndContext
 				sensors={sensors}
 				collisionDetection={closestCenter}

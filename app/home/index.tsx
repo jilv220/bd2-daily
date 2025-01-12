@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { queryClient, supabase } from "~/clients";
 import { useSession } from "~/components/session-provider";
+import { fetchSession } from "~/lib/fetch";
 import { TaskListContainer } from "./task-list-container";
 
 export function meta() {

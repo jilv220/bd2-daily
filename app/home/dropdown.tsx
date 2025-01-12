@@ -1,3 +1,4 @@
+import { supabase } from "~/clients";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
@@ -8,8 +9,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import useProfile from "~/hooks/useProfile";
-import { signOut } from "~/lib/auth";
+import useProfile from "~/hooks/use-profile";
 
 export function DropDown() {
 	const { data: profile, isPending, isError, error } = useProfile();
@@ -36,7 +36,7 @@ export function DropDown() {
 				<DropdownMenuItem
 					className="cursor-pointer"
 					onClick={async () => {
-						await signOut();
+						const { error } = await supabase.auth.signOut();
 					}}
 				>
 					Sign Out

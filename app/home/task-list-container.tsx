@@ -3,7 +3,7 @@ import { useState } from "react";
 import { capitalize } from "remeda";
 import { Button } from "~/components/ui/button";
 import type { Database } from "~/database.types";
-import { useDailyTasks } from "~/hooks/useDailyTasks";
+import { useDailyTasks } from "~/hooks/use-daily-tasks";
 import DraggableTaskList from "./draggable-task-list";
 import type { TaskPostion } from "./fetch";
 import { TaskList } from "./task-list";
